@@ -27,3 +27,13 @@ assert.equal(reserve.get().attempts, 1); assert.equal(reserve.get().attempts, 2)
 const insert = db.prepare('INSERT INTO archives VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(fingerprint) DO NOTHING'); insert.run('first', 'same-input', 'Title', 'museum', JSON.stringify(sample), '2026-10-10'); insert.run('second', 'same-input', 'Title', 'museum', JSON.stringify(sample), '2026-10-10');
 assert.equal(db.prepare('SELECT COUNT(*) AS n FROM archives').get().n, 1); assert.equal(db.prepare('SELECT id FROM archives WHERE fingerprint = ?').get('same-input').id, 'first'); db.close();
 console.log('Generation validation, error handling, model/token settings, durable budget cap, and duplicate archive storage passed. No live API requests.');
+
+await generateStory({ title: 'A valid research title', abstract: 'Untrusted research text', format: 'auto', secret: 'SHOULD-NOT-BE-SENT' }, 'SERVER-KEY-NEVER-IN-BODY', async (_url, options) => {
+  const body = JSON.parse(options.body); assert.equal(body.service_tier, 'default');
+  assert.ok(!options.body.includes('SERVER-KEY-NEVER-IN-BODY')); assert.ok(!options.body.includes('SHOULD-NOT-BE-SENT'));
+  assert.ok(Buffer.byteLength(options.body) <= 65_536); assert.equal(body.tools, undefined);
+  return Response.json(completed);
+});
+const oversized = { ...sample, sections: sample.sections.map(s => ({ ...s, text: '\u0001'.repeat(5000) })) };
+await assert.rejects(expandStory(input, oversized, 'placeholder', async () => { throw new Error('Oversized request must never call API'); }), /safe request limit/);
+console.log('Standard service tier, secret-free model input, no tool access and encoded request-size guard passed.');

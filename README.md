@@ -59,7 +59,9 @@ const result = await generateSharedArchive(db, {
 }, serverApiKey, { lookup: lookupPapers, generate: generateStory });
 ```
 
-The source currently selects `gpt-6-luna`; model availability depends on the account running an integration. The live app caps generation attempts at 100 per UTC day and 1,000 overall. These are attempt limits, not dollar guarantees. Failed or uncertain attempts stay blocked for owner investigation rather than automatically issuing another paid call. See the tests before changing this behavior.
+The source currently selects `gpt-6-luna`; model availability depends on the account running an integration. New generation is capped at 100 attempts per UTC day, 500 per UTC calendar month and 1,000 overall, with at most 10 per rolling minute and 3 simultaneous active calls. A single SQL statement atomically reserves these allowances. Cached stories remain readable after a cap is reached.
+
+The monthly application allowance conservatively reserves $0.02 per attempt toward $10. It is not measured billing: configure the dedicated OpenAI project's actual hard spend limit separately and recheck pricing before changing the model or request bounds. Failed or uncertain attempts stay blocked for owner investigation rather than automatically issuing another paid call. Rejected requests cannot burn other allowances. See the tests before changing this behavior. Anonymous scripts may still consume the allowed slots; these controls bound exposure and do not guarantee that all bot activity is detected.
 
 The React files in `ui/` are reference source, not a standalone runnable frontend. See [ui/README.md](ui/README.md) for their integration dependencies.
 
