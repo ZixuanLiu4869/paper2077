@@ -1,10 +1,10 @@
-# ICLR 2077
+# Paper 2077
 
 **A paper. A very different future.**
 
 A fictional time machine for research. While the community waits for reviews, imagine the year 2077: what if an idea from a paper changed everyday life in a spectacular, slightly absurd way?
 
-[Explore the website](https://iclr-2077-future-archives.wholehake256.chatgpt.site/) · [Read the Attention example](https://iclr-2077-future-archives.wholehake256.chatgpt.site/archive/attention) · [Suggest an idea](https://github.com/ZixuanLiu4869/iclr2077/issues)
+[Explore the website](https://paper2077.wholehake256.chatgpt.site/) · [Read the Attention example](https://paper2077.wholehake256.chatgpt.site/archive/attention) · [Suggest an idea](https://github.com/ZixuanLiu4869/paper2077/issues)
 
 ## The experience
 
@@ -36,8 +36,8 @@ This is the community edition: reusable research lookup, generation and cache co
 Use **Node.js 24+** (the database tests use the built-in `node:sqlite` module). No package installation or API key is needed:
 
 ```sh
-git clone https://github.com/ZixuanLiu4869/iclr2077.git
-cd iclr2077
+git clone https://github.com/ZixuanLiu4869/paper2077.git
+cd paper2077
 npm test
 ```
 

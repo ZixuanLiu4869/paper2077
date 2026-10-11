@@ -10,7 +10,7 @@
 .community-footer{flex-direction:column;gap:20px}.footer-top,.footer-bottom{display:flex;justify-content:space-between;align-items:baseline;gap:24px}.footer-contact{margin:0;font:12px/1.8 var(--sans);letter-spacing:0}.footer-contact a{text-decoration:underline;text-underline-offset:3px;color:var(--ink);white-space:nowrap}.footer-github{display:inline-flex;align-items:center;gap:5px;font:11px var(--sans);letter-spacing:0;color:var(--ink);white-space:nowrap}@media(max-width:700px){.footer-top{flex-direction:column;gap:7px}.footer-bottom{flex-wrap:wrap;gap:12px}.footer-contact{font-size:11px}}@media print{.community-footer{display:none!important}}
 .footer-disclaimer{max-width:560px;text-align:right;line-height:1.9}@media(max-width:700px){.footer-disclaimer{text-align:left}}
 
-/* Original ICLR 2077 artifacts. Each format has its own reading rhythm. */
+/* Original Paper 2077 artifacts. Each format has its own reading rhythm. */
 .archive-toolbar{max-width:1100px;margin:30px auto 22px;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:0 28px}
 .archive-toolbar>div{display:flex;gap:7px}.archive-toolbar .eyebrow{font-size:8px}
 .subtle{border:1px solid var(--line);background:transparent;color:var(--ink);padding:9px 11px;font-size:10px}.subtle:hover{background:#e5e7dc}

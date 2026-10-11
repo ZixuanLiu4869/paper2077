@@ -1,6 +1,6 @@
 # UI reference source
 
-These files are the selected interface source used by the live ICLR 2077 site.
+These files are the selected interface source used by the live Paper 2077 site.
 They are supplied for reading and reuse, not as a standalone app.
 
 - `page.tsx` expects `/api/status`, `/api/papers`, `/api/generate` and `/api/generation-status` from a backend integration.
