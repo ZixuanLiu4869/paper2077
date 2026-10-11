@@ -1,17 +1,23 @@
 "use client";
 import { useEffect, useState } from 'react';
-import { ArrowLeft, ArrowUpRight, Download, Link2, Printer, Orbit, Check, ArrowDown } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, Download, Link2, Printer, Orbit, Check, ArrowDown, X } from 'lucide-react';
 import type { Archive } from '@/lib/types';
 import { OrbitArt } from './orbit-art';
 import { SiteFooter } from './site-footer';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from './ui/dialog';
 import { drawShareCard, INVITATION_URL } from '@/lib/share-card.mjs';
 export default function ArchiveView({ archive }: { archive: Archive }) {
-  const { story } = archive; const [notice, setNotice] = useState(''); const [copied, setCopied] = useState(false); const [shareURL, setShareURL] = useState('');
+  const { story } = archive; const [notice, setNotice] = useState<{ message: string } | null>(null); const [copied, setCopied] = useState(false); const [shareURL, setShareURL] = useState('');
   const [poster, setPoster] = useState<{ url: string; blob: Blob } | null>(null); const [creatingPoster, setCreatingPoster] = useState(false);
   useEffect(() => () => { if (poster) URL.revokeObjectURL(poster.url); }, [poster]);
+  useEffect(() => {
+    if (!notice) return;
+    const timer = window.setTimeout(() => setNotice(null), 4500);
+    return () => window.clearTimeout(timer);
+  }, [notice]);
+  function showNotice(message: string) { setNotice({ message }); }
   const dark = story.format === 'museum' || story.format === 'documentary';
-  async function share() { const url = INVITATION_URL; setShareURL(url); try { await Promise.race([navigator.clipboard.writeText(url), new Promise((_, reject) => setTimeout(() => reject(new Error('Clipboard unavailable')), 1500))]); setCopied(true); setNotice('Website link copied.'); setTimeout(() => setCopied(false), 3000); } catch { setNotice('Select and copy the website link below.'); } }
+  async function share() { const url = INVITATION_URL; setShareURL(url); try { await Promise.race([navigator.clipboard.writeText(url), new Promise((_, reject) => setTimeout(() => reject(new Error('Clipboard unavailable')), 1500))]); setCopied(true); showNotice('Website link copied.'); setTimeout(() => setCopied(false), 3000); } catch { showNotice('Select and copy the website link below.'); } }
   async function createPoster() {
     if (creatingPoster) return; setCreatingPoster(true);
     try {
@@ -22,19 +28,19 @@ export default function ArchiveView({ archive }: { archive: Archive }) {
       const canvas = drawShareCard(document.createElement('canvas'), logo) as HTMLCanvasElement;
       const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(value => value ? resolve(value) : reject(new Error('Image export failed')), 'image/png'));
       setPoster({ url: URL.createObjectURL(blob), blob });
-    } catch { setNotice('The share image could not be prepared. Please try again.'); }
+    } catch { showNotice('The share image could not be prepared. Please try again.'); }
     finally { setCreatingPoster(false); }
   }
   function downloadPoster() {
     if (!poster) return;
     const link = document.createElement('a'); link.download = 'paper-2077-invitation.png'; link.href = poster.url; document.body.appendChild(link); link.click(); link.remove();
-    setNotice('Image download requested. You can also save the preview image.');
+    showNotice('Image download requested. You can also save the preview image.');
   }
   return <div className={'archive-shell ' + (dark ? 'dark-shell' : '')}>
     <header className="site-header"><a className="brand" href="/"><Orbit size={23} strokeWidth={1.5} /><span>Paper <b>2077</b></span></a><a className="text-link" href="/"><ArrowLeft size={15} />Back to 2027</a></header>
     <div className="archive-toolbar"><span className="eyebrow">{archive.example ? archive.id === 'example' ? 'LUNA-IMAGINED SAMPLE' : 'AN IMAGINED FUTURE' : 'SHARED FUTURE ARCHIVE'}</span><div><button onClick={share} className="button subtle">{copied ? <Check size={15} /> : <Link2 size={15} />}Copy website link</button><button onClick={createPoster} disabled={creatingPoster} className="button subtle"><Download size={15} />{creatingPoster ? 'Preparing image…' : 'Share image'}</button><button onClick={() => window.print()} className="button subtle"><Printer size={15} />Print / PDF</button></div></div>
     <Dialog open={poster !== null} onOpenChange={open => { if (!open) setPoster(null); }}><DialogContent className="share-dialog"><DialogTitle>Invite someone to 2077</DialogTitle><DialogDescription>A paper. A very different future. Come take a little trip.</DialogDescription>{poster && <img src={poster.url} alt="Paper 2077 website invitation" className="share-card-preview" />}<button type="button" className="button primary" onClick={downloadPoster}><Download size={16} />Download PNG</button></DialogContent></Dialog>
-    {notice && <div className="toast" role="status">{notice}</div>}
+    {notice && <div className="toast"><span role="status">{notice.message}</span><button type="button" className="toast-dismiss" aria-label="Dismiss notification" onClick={() => setNotice(null)}><X size={16} /></button></div>}
     {shareURL && <div className="archive-share"><label htmlFor="share-url">Website link</label><input id="share-url" readOnly value={shareURL} onFocus={event => event.target.select()} /></div>}
     <article className={'archive-document ' + story.format}>
       <div className="artifact-edition"><span>Paper 2077 / FUTURE ARCHIVES</span><span>FICTIONAL · 2077</span></div>
