@@ -19,6 +19,7 @@ assert.equal(canvas.width, 1200); assert.equal(canvas.height, 630);
 const card = draws.join(' '); assert.ok(card.includes('A paper.')); assert.ok(card.includes('A very different')); assert.ok(card.includes('future.')); assert.ok(card.includes(INVITATION_URL));
 assert.ok(!card.includes(story.headline)); assert.ok(!card.includes(story.deck)); assert.ok(!card.includes('Real Researcher')); assert.ok(!card.includes('example.edu')); assert.ok(!card.includes('BBC')); assert.ok(!card.includes('AUTHORSHIP')); assert.ok(!card.includes('no original paper'));
 assert.ok(card.includes('SPONSORED BY')); assert.ok(card.includes('Detectium'));
+assert.ok(card.includes('The 2077 Field Guide')); assert.ok(!card.includes('Wikipedia'));
 assert.deepEqual(imageDraws, [[logo, 875, 573, 56, 42]]);
 const firstDraws = [...draws]; const firstCommands = [...commands]; draws.length = 0; commands.length = 0;
 drawShareCard(canvas, logo, { title: 'A completely different submission', story: { headline: 'Secret second story' } });

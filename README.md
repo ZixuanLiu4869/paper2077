@@ -14,7 +14,7 @@ A fictional time machine for research. While the community waits for reviews, im
 - Everyone visiting the same paper reuses the saved result. A durable database claim prevents concurrent requests from paying for duplicate generations.
 - Every paper uses the same fixed website invitation image. It never receives a paper title, story, author or visitor identity.
 
-The **Attention Was All You Needed** example is editorial fiction, not an ICLR 2027 submission or a claim about actual future events. All future stories are invented. This project is not affiliated with ICLR, BBC or Wikipedia.
+The **Attention Was All You Needed** example is editorial fiction, not an ICLR 2027 submission or a claim about actual future events. All future stories are invented. This project is not affiliated with ICLR, OpenReview or any depicted organization.
 
 ## What is open here
 
