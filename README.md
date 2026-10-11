@@ -25,6 +25,8 @@ This is the community edition: reusable research lookup, generation and cache co
 | `lib/openreview.mjs` | Public ICLR 2027 title search and submission validation |
 | `lib/generation.mjs` | Story prompt, strict JSON schema, validation and API client |
 | `lib/shared-generation.mjs` | Cache-first flow, durable generation claim and attempt limits |
+| `lib/request-guard.mjs` | Transactional client/global request limits and daily pseudonyms |
+| `lib/search-cache.mjs` | Ten-minute search cache, durable query leases and upstream backoff |
 | `lib/privacy.mjs` | Contact filtering, public field projection and paper fingerprint |
 | `lib/share-card.mjs` | Fixed 1200×630 invitation artwork, with no paper/story input |
 | `drizzle/*.sql` | Empty database schema and migrations, not stored records |
@@ -43,9 +45,13 @@ npm test
 
 Tests make **no live model or OpenReview requests** and spend no API credits. They cover source validation, anonymous field projection, identical invitation artwork, cache reuse, concurrent visitors, ambiguous failures and budget caps.
 
+Search results are cached for ten minutes; empty results for one minute. Concurrent searches for the same normalized title share a database lease. New OpenReview queries are capped at 60 per minute and 3,000 per 24-hour window, with a short backoff after upstream failures. The HTTP perimeter separately caps search at 20 requests per client bucket per minute and 240 globally, generation requests at 6/60, and status/archive requests at 120/1,200. It returns 429 with Retry-After when capacity is exhausted. These counters supplement hosting protection; they are not a CAPTCHA or a guarantee against distributed denial of service.
+
+Backend integrations must apply `protectRequest` to the original trusted edge Request before framework adaptation, provision a private `ABUSE_GUARD_SECRET`, and implement transactional D1 `batch`. Raw IP addresses, client-supplied X-Forwarded-For values and visitor account data are not stored. Daily HMAC pseudonyms are used for short-lived counters, and record counts are bounded. Without trustworthy edge metadata, clients share a conservative fallback bucket. Search cache payloads contain public paper metadata, never OpenReview author profiles or private notes. Searches themselves do not call the model.
+
 ## Reuse the core
 
-The modules are standard ESM with no third-party runtime dependencies. A backend adapter supplies a D1-compatible database (`prepare`, `bind`, `first`, `run`), validated lookup and generation functions. Keep the API key on the server.
+The modules are standard ESM with no third-party runtime dependencies. A backend adapter supplies a D1-compatible database (`prepare`, `bind`, `first`, `run`, transactional `batch`), validated lookup and generation functions. Keep the API key on the server.
 
 ```js
 import { lookupPapers } from './lib/openreview.mjs';
@@ -71,4 +77,4 @@ We welcome clearer storytelling, better archive layouts, accessibility fixes, st
 
 Supported by [Detectium](https://www.detectium.io/). If this project is interesting to you, reach out at **info@detectium.io**.
 
-The code is available under the [MIT License](LICENSE). Detectium's name and logo, and third-party publication names, remain their owners' marks; the code license does not grant rights to those marks.
+The code is available under the [MIT License](LICENSE). Third-party runtime software keeps its own licenses; see [the notices](THIRD-PARTY-NOTICES.txt). Public OpenReview titles and abstracts are metadata subject to the CC0 dedication in its [Terms of Use](https://openreview.net/legal/terms); full papers and figures are outside this application's input. Detectium's branding is used with permission. Its name and logo remain its owner's marks; the code license does not grant rights to those marks.

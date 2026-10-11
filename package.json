@@ -8,6 +8,6 @@
     "node": ">=24"
   },
   "scripts": {
-    "test": "node scripts/test-generation.mjs && node scripts/test-openreview.mjs && node scripts/test-privacy.mjs && node scripts/test-shared-generation.mjs"
+    "test": "node scripts/test-generation.mjs && node scripts/test-openreview.mjs && node scripts/test-privacy.mjs && node scripts/test-shared-generation.mjs && node scripts/test-request-protection.mjs"
   }
 }
