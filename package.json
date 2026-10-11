@@ -1,0 +1,13 @@
+{
+  "name": "iclr2077-community",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "node scripts/test-generation.mjs && node scripts/test-openreview.mjs && node scripts/test-privacy.mjs && node scripts/test-shared-generation.mjs"
+  }
+}
